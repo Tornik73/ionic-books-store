@@ -5,7 +5,7 @@ import { environment } from '../../environments/environment.prod';
 @Injectable({
   providedIn: 'root'
 })
-export class HttpRequestsService {
+export class HTTPRequestsService {
 
   serverURL: string = environment.serverURL;
 

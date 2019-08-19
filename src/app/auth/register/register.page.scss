@@ -1,8 +1,11 @@
-ion-item{
-    --background: #3880ff;
-    --color: #fff;
+.error-message
+{
+  color: red;
+  font-size: 14px;
+  margin-left: 10px;
+  margin-top: 10px;
 }
 
-ion-button{
-    --background: #062f77;
+.submit-btn {
+  margin-top: 40px;
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Book } from '../models/book.model';
-import { HttpRequestsService } from '../services/requests.service';
+import { HTTPRequestsService } from '../services/requests.service';
 // import { BatteryStatus } from '@ionic-native/battery-status/ngx';
 
 @Component({
@@ -11,7 +11,7 @@ import { HttpRequestsService } from '../services/requests.service';
 export class MainPage implements OnInit  {
   goodsData: Book[] = [];
 
-  constructor(private requestServ: HttpRequestsService) {
+  constructor(private requestServ: HTTPRequestsService) {
   }
 
   ngOnInit() {
