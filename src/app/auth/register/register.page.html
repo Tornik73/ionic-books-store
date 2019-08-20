@@ -1,8 +1,13 @@
+<ion-backdrop *ngIf="sendingRequest">
+</ion-backdrop>
+
 <div text-center>
   <h3>Create your account!</h3>
 </div>
 <ion-content padding class="form-content">
+
   <form [formGroup]="validationsForm" (ngSubmit)="onSubmit(validationsForm.value)">
+
     <ion-item>
       <ion-label position="floating" color="primary">Username</ion-label>
       <ion-input type="text" formControlName="username"></ion-input>
@@ -147,9 +152,8 @@
       </ng-container>
     </div>
     <ion-button *ngIf="!this.sendingRequest" color="primary" class="submit-btn" expand="full" type="submit" [disabled]="!validationsForm.valid">
-      Submit data</ion-button>
+      Submit</ion-button>
     <ion-button *ngIf="this.sendingRequest" color="primary" class="submit-btn" expand="full" type="submit" [disabled]="validationsForm.valid">
     <ion-spinner></ion-spinner></ion-button>
   </form>
-
 </ion-content>

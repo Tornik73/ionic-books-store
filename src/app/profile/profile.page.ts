@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators  } from '@angular/forms';
+import { HTTPRequestsService } from '../services/http-requests.service';
+import { PhotoService } from '../services/photo-service.service';
+import { User } from '../models/user.model';
 
 @Component({
   selector: 'app-profile',
@@ -7,19 +10,73 @@ import { FormControl, FormGroup, Validators  } from '@angular/forms';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
-  signupform: FormGroup;
-  userData = { "username": "", "password": "", "email": "", "name": "" };
-  
-  constructor() { }
+  currentUserId: number;
+  currentUser: string;
+  currentUserPassword: string;
+  currentUserRights: string;
+  currentUserAge: number;
+  currentUserTel: string;
+  currentUserImg: string;
+  isAdmin: boolean;
+  editMode = false;
+  angForm: FormGroup;
+  loadingDataSpinner = false;
 
-  ngOnInit() {
-    let EMAILPATTERN = /^[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/i;
-    this.signupform = new FormGroup({
-      username: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z ]*'), Validators.minLength(4), Validators.maxLength(10)]),
-      password: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(12)]),
-      name: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z ]*'), Validators.minLength(4), Validators.maxLength(30)]),
-      email: new FormControl('', [Validators.required, Validators.pattern(EMAILPATTERN)]),
-    });
+  constructor(// private service: AuthService,
+              // private infoService: HeaderObserveService,
+              private previewPhotoService: PhotoService,
+              private requestServ: HTTPRequestsService) {
   }
 
+  preview(files) {
+    this.previewPhotoService.preview(files)
+      .then( (result: string) =>
+        this.currentUserImg = result
+      );
+  }
+
+  // Managing of edit mode
+  editModeOn() {
+    this.currentUserImg = localStorage.currentUserImg; // reset picture change
+    return this.editMode = !this.editMode;
+  }
+
+  onUpload() {
+    this.loadingDataSpinner = true;
+    localStorage.currentUserImg = this.currentUserImg;
+
+    this.currentUserTel = localStorage.currentUserTelephone = this.angForm.value.telephone;
+    this.currentUserAge = localStorage.currentUserAge = this.angForm.value.age;
+
+    // const userJSON: User = {
+    //   id: this.currentUserId,
+    //   email: this.currentUser,
+    //   password: this.currentUserPassword,
+    //   telephone: this.currentUserTel,
+    //   age: this.currentUserAge,
+    //   img: this.currentUserImg,
+    //   isAdmin: this.service.authUserRights
+    // };
+
+    // this.requestServ.httpUserPut(userJSON)
+    // .subscribe( () => {
+    //   setTimeout(() => {
+    //     this.loadingDataSpinner = false;
+    //     this.infoService.anounceHeaderImg(this.currentUserImg); // Notify that the picture has changed
+    //   }, 2000);
+    //   return this.editMode = false;
+    // })
+  }
+
+  ngOnInit() {
+    // if (!this.service.authUserRights) {
+    //   this.currentUserRights = 'admin';
+    // } else {
+    //   this.currentUserRights = 'user';
+    // }
+    this.angForm = new FormGroup({
+      age: new FormControl(this.currentUserAge, [Validators.required, Validators.min(18)]),
+      telephone: new FormControl(this.currentUserTel, [Validators.required])
+    });
+  }
 }

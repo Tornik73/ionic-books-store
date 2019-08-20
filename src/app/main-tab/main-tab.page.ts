@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Book } from '../models/book.model';
-import { HTTPRequestsService } from '../services/requests.service';
+import { HTTPRequestsService } from '../services/http-requests.service';
 // import { BatteryStatus } from '@ionic-native/battery-status/ngx';
 
 @Component({

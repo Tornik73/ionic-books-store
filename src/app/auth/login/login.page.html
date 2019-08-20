@@ -1,9 +1,51 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>login</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-backdrop *ngIf="sendingRequest">
+</ion-backdrop>
+<div text-center>
+  <h3>Hi, please log in!</h3>
+</div>
+<ion-content padding class="form-content">
+  <form [formGroup]="validationsForm" (ngSubmit)="onSubmit(validationsForm.value)">
+    <ion-item>
+      <ion-label position="floating" color="primary">Username Or Email</ion-label>
+      <ion-input type="text" formControlName="usernameEmail"></ion-input>
+    </ion-item>
+    <div class="validation-errors">
+      <ng-container *ngFor="let validation of validationMessages.usernameEmail">
+        <div class="error-message"
+          *ngIf="validationsForm.get('usernameEmail').hasError(validation.type) && (validationsForm.get('usernameEmail').dirty || validationsForm.get('usernameEmail').touched)">
+          <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+        </div>
+      </ng-container>
+    </div>
 
-<ion-content>
+    <div formGroupName="matching_passwords">
+      <ion-item>
+        <ion-label position="floating" color="primary">Password</ion-label>
+        <ion-input type="password" formControlName="password"></ion-input>
+      </ion-item>
+      <div class="validation-errors">
+        <ng-container *ngFor="let validation of validationMessages.password">
+          <div class="error-message"
+            *ngIf="validationsForm.get('matching_passwords').get('password').hasError(validation.type) && (validationsForm.get('matching_passwords').get('password').dirty || validationsForm.get('matching_passwords').get('password').touched)">
+            <ion-icon name="information-circle-outline"></ion-icon> {{ validation.message }}
+          </div>
+        </ng-container>
+      </div>
+
+
+    </div>
+
+    <ion-button *ngIf="!this.sendingRequest" color="primary" class="submit-btn" expand="full" type="submit" [disabled]="!validationsForm.valid">
+      Log in</ion-button>
+    <ion-button *ngIf="this.sendingRequest" color="primary" class="submit-btn" expand="full" type="submit" [disabled]="validationsForm.valid">
+    <ion-spinner></ion-spinner></ion-button>
+    <div class="error-message" text-center>
+        <ion-icon *ngIf="this.httpError" name="information-circle-outline"></ion-icon>{{ this.httpError }}
+    </div>
+    <div>
+      <a (click)="this.router.navigate(['tabs/register']);">Create account</a>
+    </div>
+
+  </form>
 
 </ion-content>

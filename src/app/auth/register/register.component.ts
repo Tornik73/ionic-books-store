@@ -6,8 +6,7 @@ import { PasswordValidator } from '../../validators/password.validator';
 import { PhoneValidator } from 'src/app/validators/phone.validator';
 import { UsernameValidator } from 'src/app/validators/username.validator';
 import { ToastController } from '@ionic/angular';
-import { HTTPRequestsService } from '../../services/requests.service';
-import { User } from 'src/app/models/user.model';
+import { HTTPRequestsService } from '../../services/http-requests.service';
 
 @Component({
   selector: 'app-register',
@@ -19,10 +18,9 @@ export class RegisterPage implements OnInit {
   validationsForm: FormGroup;
   matchingPasswordsGroup: FormGroup;
   countryPhoneGroup: FormGroup;
-
   countries: Array<CountryPhone>;
   genders: Array<string>;
-
+  sendingRequest = false;
   validationMessages: object = {
     username: [
       { type: 'required', message: 'Username is required.' },
@@ -66,7 +64,7 @@ export class RegisterPage implements OnInit {
     ],
 
   };
-  sendingRequest = false;
+
 
   constructor(
     public formBuilder: FormBuilder,
@@ -122,7 +120,6 @@ export class RegisterPage implements OnInit {
 
     this.validationsForm = this.formBuilder.group({
       username: new FormControl('', Validators.compose([
-        UsernameValidator.validUsername,
         Validators.maxLength(25),
         Validators.minLength(5),
         Validators.pattern('^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$'),
@@ -144,12 +141,13 @@ export class RegisterPage implements OnInit {
       matching_passwords: this.matchingPasswordsGroup,
       terms: new FormControl(true, Validators.pattern('true'))
     });
+
   }
 
 
   onSubmit(values) {
-    this.sendingRequest = true;
 
+    this.sendingRequest = true;
     const corectValues = {
       email: values.email,
       name: values.name,
@@ -165,6 +163,7 @@ export class RegisterPage implements OnInit {
     const registerSubcription = this.requestServ.httpUsersPost(corectValues)
       .subscribe(() => {
         setTimeout(() => {
+          this.validationsForm.reset(this.validationsForm);
           this.presentToast();
           this.sendingRequest = false;
           this.router.navigate(['']);
