@@ -48,6 +48,16 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'confirm/:code',
+        children: [
+          {
+            path: '',
+            loadChildren: () =>
+              import('../confirm-email/confirm-email.module').then(m => m.ConfirmEmailPageModule)
+          }
+        ]
+      },
+      {
         path: '',
         redirectTo: '/tabs/main-tab',
         pathMatch: 'full'

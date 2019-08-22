@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators  } from '@angular/forms';
 import { HTTPRequestsService } from '../services/http-requests.service';
 import { PhotoService } from '../services/photo-service.service';
 import { User } from '../models/user.model';
+import { AuthService, SocialUser } from 'angularx-social-login';
 
 @Component({
   selector: 'app-profile',
@@ -22,10 +23,14 @@ export class ProfilePage implements OnInit {
   angForm: FormGroup;
   loadingDataSpinner = false;
 
+  private user: SocialUser;
+  private loggedIn: boolean;
+
   constructor(// private service: AuthService,
               // private infoService: HeaderObserveService,
               private previewPhotoService: PhotoService,
-              private requestServ: HTTPRequestsService) {
+              private requestServ: HTTPRequestsService,
+              private authService: AuthService) {
   }
 
   preview(files) {
@@ -69,6 +74,10 @@ export class ProfilePage implements OnInit {
   }
 
   ngOnInit() {
+    this.authService.authState.subscribe((user) => {
+      this.user = user;
+      this.loggedIn = (user != null);
+    });
     // if (!this.service.authUserRights) {
     //   this.currentUserRights = 'admin';
     // } else {

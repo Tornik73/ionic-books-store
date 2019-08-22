@@ -1,5 +1,7 @@
 {
   "name": "book-store",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

@@ -37,6 +37,9 @@ export class HTTPRequestsService {
     return this.http.delete(this.serverURL + 'users/' + id);
   }
 
+  httpUserActive(code: string) {
+    return this.http.get(this.serverURL + 'confirm/' + code);
+  }
   // Books requests
 
   httpBooksGet(id: number = null) {

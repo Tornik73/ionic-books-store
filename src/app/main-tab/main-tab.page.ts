@@ -20,7 +20,8 @@ export class MainPage implements OnInit  {
       this.goodsData = [];
       // tslint:disable-next-line: forin
       for (let i in response) {
-          this.goodsData.push(response[i]);
+        console.log(response[i]);
+        this.goodsData.push(response[i]);
       }
     });
   // // watch change in battery status
