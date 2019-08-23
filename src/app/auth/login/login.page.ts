@@ -10,6 +10,8 @@ import { Observable } from 'rxjs';
 
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { Platform } from '@ionic/angular';
+import { AuthService } from '../../services/auth.service';
+import { first } from 'rxjs/operators';
 
 
 @Component({
@@ -18,8 +20,6 @@ import { Platform } from '@ionic/angular';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
-
-
   validationsForm: FormGroup;
   matchingPasswordsGroup: FormGroup;
   countryPhoneGroup: FormGroup;
@@ -47,7 +47,8 @@ export class LoginPage implements OnInit {
     private requestServ: HTTPRequestsService,
     private afAuth: AngularFireAuth,
     private gplus: GooglePlus,
-    private platform: Platform
+    private platform: Platform,
+    private authService: AuthService
   ) {
     this.user = this.afAuth.authState;
   }
@@ -61,12 +62,14 @@ export class LoginPage implements OnInit {
   }
 
   async nativeGoogleLogin(): Promise<any> {
+
     try {
       const gplusUser = await this.gplus.login({
-        'webClientId': '893912839232-s3nse0a5ihs4cqe885i1okp08n9oi36s.apps.googleusercontent.com',
-        'offline': true,
-        'scopes': 'profile email'
+        webClientId: '893912839232-s3nse0a5ihs4cqe885i1okp08n9oi36s.apps.googleusercontent.com',
+        offline: true,
+        scopes: 'profile email'
       });
+      this.router.navigate(['']);
       return await this.afAuth.auth.signInWithCredential(
         firebase.auth.GoogleAuthProvider.credential(gplusUser.idToken)
       );
@@ -79,12 +82,16 @@ export class LoginPage implements OnInit {
     try {
       const provider = new firebase.auth.GoogleAuthProvider();
       const credential = await this.afAuth.auth.signInWithPopup(provider);
+      this.authService.anounceChangingAuthStatus(true);
+      this.router.navigate(['']);
+      this.presentToast(credential.user.displayName);
     } catch (err) {
       console.log(err);
     }
   }
 
   signOut() {
+    this.authService.anounceChangingAuthStatus(false);
     this.afAuth.auth.signOut();
     if (this.platform.is('cordova')) {
       this.gplus.logout();
@@ -92,9 +99,9 @@ export class LoginPage implements OnInit {
   }
 
 
-  async presentToast() {
+  async presentToast(username: string) {
     const toast = await this.toastController.create({
-      message: 'You successfully log in! Hi, username!',
+      message: 'You successfully log in!' + ' Hi ' + username + ' !',
       duration: 2000,
       color: 'dark',
       showCloseButton: true,
@@ -103,11 +110,9 @@ export class LoginPage implements OnInit {
     toast.present();
   }
 
-  // signInWithGoogle(): void {
-  //   this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
-  // }
-
   ngOnInit() {
+    // reset login status
+    this.authService.logout();
 
     this.matchingPasswordsGroup = new FormGroup({
       password: new FormControl('', Validators.required),
@@ -122,28 +127,48 @@ export class LoginPage implements OnInit {
   onSubmit(values) {
     this.sendingRequest = true;
 
-    const corectValues = {
+    const correctValues = {
       email: values.usernameEmail,
       password: values.matching_passwords.password,
     };
+    // const registerSubcription = this.requestServ.httpUsersAuth(correctValues)
+    //   .subscribe(
+    //     response => {
+    //       setTimeout(() => {
 
-    const registerSubcription = this.requestServ.httpUsersAuth(corectValues)
+    //         // this.presentToast();
+    //         this.validationsForm.reset(this.validationsForm);
+    //         this.sendingRequest = false;
+    //         this.authService.anounceChangingAuthStatus(true);
+    //         this.httpError = '';
+    //         this.router.navigate(['']);
+    //       }, 1000);
+    //     },
+    //     error => {
+    //       setTimeout(() => {
+    //         this.sendingRequest = false;
+    //         this.httpError =  error.error.message;
+    //       }, 1000);
+    //   });
+    this.authService.login(correctValues.email, correctValues.password)
+      .pipe(first())
       .subscribe(
-        response => {
-          setTimeout(() => {
-            this.validationsForm.reset(this.validationsForm);
-            this.presentToast();
-            this.sendingRequest = false;
-            this.httpError = '';
-            this.router.navigate(['']);
-          }, 1000);
-        },
-        error => {
-          setTimeout(() => {
-            this.sendingRequest = false;
-            this.httpError =  error.error.message;
-          }, 1000);
-      });
-
+          data => {
+            setTimeout(() => { // TODO: remove after tests done
+              this.presentToast(correctValues.email);
+              FormGroup.prototype.reset(this.validationsForm);
+              this.httpError = '';
+              this.sendingRequest = false;
+              this.authService.anounceChangingAuthStatus(true);
+              this.authService.isLoginSubject.next(true);
+              this.router.navigate(['']);
+            }, 1000);
+          },
+          error => {
+              this.authService.anounceChangingAuthStatus(false);
+              this.validationsForm.reset(this.validationsForm);
+              this.sendingRequest = false;
+              this.httpError =  error.error.message;
+          });
   }
 }

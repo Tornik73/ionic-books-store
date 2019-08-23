@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Book } from '../models/book.model';
+import { Book, AuthorsBooks } from '../models/book.model';
 import { HTTPRequestsService } from '../services/http-requests.service';
 // import { BatteryStatus } from '@ionic-native/battery-status/ngx';
 
@@ -9,27 +9,22 @@ import { HTTPRequestsService } from '../services/http-requests.service';
   styleUrls: ['main-tab.page.scss']
 })
 export class MainPage implements OnInit  {
-  goodsData: Book[] = [];
+  goodsData = [];
 
   constructor(private requestServ: HTTPRequestsService) {
   }
 
   ngOnInit() {
     this.requestServ.httpBooksGet()
-    .subscribe((response: Book) => {
+    .subscribe((response: AuthorsBooks) => {
       this.goodsData = [];
       // tslint:disable-next-line: forin
       for (let i in response) {
         console.log(response[i]);
-        this.goodsData.push(response[i]);
+        let authorBook = Object.assign(response[i].book, response[i].author);
+        console.log(authorBook);
+        this.goodsData.push(authorBook);
       }
     });
-  // // watch change in battery status
-  //   const subscription = this.batteryStatus.onChange().subscribe(status => {
-  //     console.log(status.level, status.isPlugged);
-  //   });
-
-  // // stop watch
-  // subscription.unsubscribe();
   }
 }

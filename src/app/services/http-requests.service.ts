@@ -14,6 +14,7 @@ export class HTTPRequestsService {
   // User requests
 
   httpUsersAuth(body) {
+    console.log(body);
     return this.http.post<any>(this.serverURL + 'authenticate', body);
   }
 

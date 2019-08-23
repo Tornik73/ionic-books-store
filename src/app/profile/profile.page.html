@@ -1,19 +1,20 @@
 <ion-card class="form-container" *ngIf="loadingDataSpinner === false">
   <div class="profile-container">
     <ion-button id="delete" class="delete-button" color="danger" >X</ion-button>
-    <ion-title class="title-settings">Account settings: </ion-title>
-    <div class="avatar"><img [src]="{{ user.photoUrl }}" height="200" *ngIf="currentUserImg"></div>
+    <ion-card-header>
+        <ion-card-title>Account settings: </ion-card-title>
+    </ion-card-header>
+    <div class="avatar"><img [src]="" height="200" *ngIf="currentUserImg"></div>
     <div class="change-avatar">
       <span style="color:red;" *ngIf="message">{{ message }}</span>
       <input *ngIf="editMode" #file type="file" accept='image/*' (change)="preview(file.files)" />
     </div>
-    <ion-title>{{ user.name }}</ion-title>
-    <div>
-        <p>{{ user.email }}</p>
-    </div>
-
-    <!-- <ion-subtitle>{{ currentUserRights }}</ion-subtitle> -->
-
+    <ion-card-content>
+        <div>Username: {{ this.userData.username }}</div>
+        <div>Email: {{ this.userData.email }}</div>
+        <div>Status: {{ this.userData.isAdmin }}</div>
+    </ion-card-content>
+    
     <div class="button-group">
       <ion-button *ngIf="!editMode"  color="primary" (click)="editModeOn()">Edit</ion-button>
       <ion-button *ngIf="editMode" color="primary" (click)="editModeOn()">Cancel</ion-button>
@@ -21,3 +22,9 @@
     </div>
   </div>
 </ion-card>
+<ion-button (click)="this.router.navigate(['tabs/admin-panel']);">
+    Admin panel
+  </ion-button>
+<ion-button (click)="this.logOut()">
+  Signout
+</ion-button>

@@ -58,6 +58,16 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'admin-panel',
+        children: [
+          {
+            path: '',
+            loadChildren: () =>
+              import('../admin-panel/admin-panel.module').then(m => m.AdminPanelPageModule)
+          }
+        ]
+      },
+      {
         path: '',
         redirectTo: '/tabs/main-tab',
         pathMatch: 'full'

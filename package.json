@@ -31,6 +31,8 @@
     "core-js": "^2.5.4",
     "firebase": "^6.4.0",
     "google-libphonenumber": "^3.2.3",
+    "jwt-decode": "^2.2.0",
+    "ngx-image-compress": "^8.0.3",
     "rxjs": "~6.5.1",
     "tslib": "^1.9.0",
     "zone.js": "~0.9.1"

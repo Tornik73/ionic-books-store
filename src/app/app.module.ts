@@ -8,21 +8,24 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule} from 'angularfire2/auth';
+import { JwtInterceptor, ErrorInterceptor } from './_helpers';
+import { NotAuthGuard } from './guards/not-auth.guard';
+
 
 const firebaseConfig = {
   apiKey: 'AIzaSyCNzv4_QRpxTXSRCo3IBX7aXwHEDjIFi-Y',
-  authDomain: "book-store-1566203352826.firebaseapp.com",
-  databaseURL: "https://book-store-1566203352826.firebaseio.com",
-  projectId: "book-store-1566203352826",
-  storageBucket: "book-store-1566203352826.appspot.com",
-  messagingSenderId: "893912839232",
-  appID: "1:893912839232:ios:764d2cb7da3280eb"
+  authDomain: 'book-store-1566203352826.firebaseapp.com',
+  databaseURL: 'https://book-store-1566203352826.firebaseio.com',
+  projectId: 'book-store-1566203352826',
+  storageBucket: 'book-store-1566203352826.appspot.com',
+  messagingSenderId: '893912839232',
+  appID: '1:893912839232:ios:764d2cb7da3280eb'
 };
 
 
@@ -43,6 +46,9 @@ const firebaseConfig = {
     GooglePlus,
     StatusBar,
     SplashScreen,
+    NotAuthGuard,
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     {
       provide:  RouteReuseStrategy,
       useClass: IonicRouteStrategy,

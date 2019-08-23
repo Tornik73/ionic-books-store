@@ -12,4 +12,5 @@ export interface User {
     img: string;
     isAdmin: boolean;
     isActive: boolean;
+    token: string;
 }

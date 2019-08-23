@@ -2,8 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators  } from '@angular/forms';
 import { HTTPRequestsService } from '../services/http-requests.service';
 import { PhotoService } from '../services/photo-service.service';
+import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { AngularFireAuth } from 'angularfire2/auth';
+import { Platform } from '@ionic/angular';
+import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { User } from '../models/user.model';
-import { AuthService, SocialUser } from 'angularx-social-login';
+import * as JWT from 'jwt-decode';
 
 @Component({
   selector: 'app-profile',
@@ -22,21 +28,26 @@ export class ProfilePage implements OnInit {
   editMode = false;
   angForm: FormGroup;
   loadingDataSpinner = false;
+  authStatus: boolean;
+  user: Observable<firebase.User>;
+  userData: User;
 
-  private user: SocialUser;
-  private loggedIn: boolean;
-
-  constructor(// private service: AuthService,
-              // private infoService: HeaderObserveService,
+  constructor(private authService: AuthService,
               private previewPhotoService: PhotoService,
               private requestServ: HTTPRequestsService,
-              private authService: AuthService) {
+              private afAuth: AngularFireAuth,
+              private platform: Platform,
+              private gplus: GooglePlus,
+              private router: Router,
+              private authServ: AuthService) {
+              this.user = this.afAuth.authState;
   }
 
   preview(files) {
     this.previewPhotoService.preview(files)
-      .then( (result: string) =>
-        this.currentUserImg = result
+      .then( (result: string) => {
+        this.currentUserImg = result;
+      }
       );
   }
 
@@ -46,43 +57,38 @@ export class ProfilePage implements OnInit {
     return this.editMode = !this.editMode;
   }
 
+  logOut() {
+    localStorage.clear();
+    this.authServ.isLoginSubject.next(false);
+    this.authService.anounceChangingAuthStatus(false);
+    this.afAuth.auth.signOut();
+    if (this.platform.is('cordova')) {
+      this.gplus.logout();
+    }
+    this.router.navigate(['']);
+  }
+
   onUpload() {
-    this.loadingDataSpinner = true;
-    localStorage.currentUserImg = this.currentUserImg;
+    // this.loadingDataSpinner = true;
+    // localStorage.currentUserImg = this.currentUserImg;
 
-    this.currentUserTel = localStorage.currentUserTelephone = this.angForm.value.telephone;
-    this.currentUserAge = localStorage.currentUserAge = this.angForm.value.age;
-
-    // const userJSON: User = {
-    //   id: this.currentUserId,
-    //   email: this.currentUser,
-    //   password: this.currentUserPassword,
-    //   telephone: this.currentUserTel,
-    //   age: this.currentUserAge,
-    //   img: this.currentUserImg,
-    //   isAdmin: this.service.authUserRights
-    // };
-
-    // this.requestServ.httpUserPut(userJSON)
-    // .subscribe( () => {
-    //   setTimeout(() => {
-    //     this.loadingDataSpinner = false;
-    //     this.infoService.anounceHeaderImg(this.currentUserImg); // Notify that the picture has changed
-    //   }, 2000);
-    //   return this.editMode = false;
-    // })
+    // this.currentUserTel = localStorage.currentUserTelephone = this.angForm.value.telephone;
+    // this.currentUserAge = localStorage.currentUserAge = this.angForm.value.age;
   }
 
   ngOnInit() {
-    this.authService.authState.subscribe((user) => {
-      this.user = user;
-      this.loggedIn = (user != null);
-    });
-    // if (!this.service.authUserRights) {
-    //   this.currentUserRights = 'admin';
-    // } else {
-    //   this.currentUserRights = 'user';
-    // }
+    // this.token = JSON.parse(localStorage.getItem('currentUser')).token;
+    // const token = JSON.parse(this.token.source._value).token;
+    // this.userData = JWT(token);
+    let stringUser;
+    this.authServ.getCurrentUser().subscribe(
+      (user: any) => {
+        stringUser = user;
+      }
+    );
+    const token = JSON.parse(stringUser).token;
+    this.userData = JWT(token);
+
     this.angForm = new FormGroup({
       age: new FormControl(this.currentUserAge, [Validators.required, Validators.min(18)]),
       telephone: new FormControl(this.currentUserTel, [Validators.required])

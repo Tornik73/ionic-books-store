@@ -43,7 +43,8 @@
         <ion-icon *ngIf="this.httpError" name="information-circle-outline"></ion-icon>{{ this.httpError }}
     </div>
     <div>
-      <a (click)="this.router.navigate(['tabs/register']);">Create account</a>
+      Or you can:
+      <a (click)="this.router.navigate(['tabs/register']);">Create new account</a>
     </div>
   </form>
   <div *ngIf="(user | async) || {} as user">
@@ -55,9 +56,9 @@
     </button>
     <div *ngIf="user.uid">
       You`re already logged in with UID: {{ user.uid }}
-      <button ion-button (click)="this.signOut()">
+      <ion-button ion-button (click)="this.signOut()">
         Signout
-      </button>
+      </ion-button>
     </div>
   </div>
 </ion-content>
