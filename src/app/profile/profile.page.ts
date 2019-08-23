@@ -1,15 +1,13 @@
+import * as JWT from 'jwt-decode';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators  } from '@angular/forms';
-import { HTTPRequestsService } from '../services/http-requests.service';
-import { PhotoService } from '../services/photo-service.service';
-import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { Platform } from '@ionic/angular';
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
-import { User } from '../models/user.model';
-import * as JWT from 'jwt-decode';
+import { User } from '../models/index';
+import { HTTPRequestsService, PhotoService, AuthService } from '../services/index';
 
 @Component({
   selector: 'app-profile',
@@ -32,15 +30,28 @@ export class ProfilePage implements OnInit {
   user: Observable<firebase.User>;
   userData: User;
 
-  constructor(private authService: AuthService,
-              private previewPhotoService: PhotoService,
-              private requestServ: HTTPRequestsService,
+  constructor(private previewPhotoService: PhotoService,
               private afAuth: AngularFireAuth,
               private platform: Platform,
               private gplus: GooglePlus,
               private router: Router,
               private authServ: AuthService) {
               this.user = this.afAuth.authState;
+  }
+
+  ngOnInit() {
+    let stringUser: string;
+    this.authServ.getCurrentUser().subscribe(
+      (user: string) => {
+        stringUser = user;
+      }
+    );
+    this.userData = JWT(stringUser);
+
+    this.angForm = new FormGroup({
+      age: new FormControl(this.currentUserAge, [Validators.required, Validators.min(18)]),
+      telephone: new FormControl(this.currentUserTel, [Validators.required])
+    });
   }
 
   preview(files) {
@@ -53,45 +64,21 @@ export class ProfilePage implements OnInit {
 
   // Managing of edit mode
   editModeOn() {
-    this.currentUserImg = localStorage.currentUserImg; // reset picture change
+    // this.currentUserImg = localStorage.currentUserImg; // reset picture change
     return this.editMode = !this.editMode;
+  }
+
+  onUpload() {
+    // on Upload image in profile page
   }
 
   logOut() {
     localStorage.clear();
     this.authServ.isLoginSubject.next(false);
-    this.authService.anounceChangingAuthStatus(false);
     this.afAuth.auth.signOut();
     if (this.platform.is('cordova')) {
       this.gplus.logout();
     }
     this.router.navigate(['']);
-  }
-
-  onUpload() {
-    // this.loadingDataSpinner = true;
-    // localStorage.currentUserImg = this.currentUserImg;
-
-    // this.currentUserTel = localStorage.currentUserTelephone = this.angForm.value.telephone;
-    // this.currentUserAge = localStorage.currentUserAge = this.angForm.value.age;
-  }
-
-  ngOnInit() {
-    // this.token = JSON.parse(localStorage.getItem('currentUser')).token;
-    // const token = JSON.parse(this.token.source._value).token;
-    // this.userData = JWT(token);
-    let stringUser;
-    this.authServ.getCurrentUser().subscribe(
-      (user: any) => {
-        stringUser = user;
-      }
-    );
-    const token = JSON.parse(stringUser).token;
-    this.userData = JWT(token);
-
-    this.angForm = new FormGroup({
-      age: new FormControl(this.currentUserAge, [Validators.required, Validators.min(18)]),
-      telephone: new FormControl(this.currentUserTel, [Validators.required])
-    });
   }
 }

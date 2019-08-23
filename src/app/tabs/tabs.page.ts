@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../services/auth.service';
-import { Subject, Observable } from 'rxjs';
+import { Component } from '@angular/core';
+import { AuthService } from '../services/index';
+import { Observable } from 'rxjs';
 import { AngularFireAuth } from 'angularfire2/auth';
 
 @Component({
@@ -8,7 +8,7 @@ import { AngularFireAuth } from 'angularfire2/auth';
   templateUrl: 'tabs.page.html',
   styleUrls: ['tabs.page.scss']
 })
-export class TabsPage implements OnInit {
+export class TabsPage {
 
   user: Observable<firebase.User>;
   isLoggedIn: Observable<boolean>;
@@ -19,13 +19,6 @@ export class TabsPage implements OnInit {
     this.isLoggedIn = authService.isLoggedIn();
   }
 
-  ngOnInit() {
-    this.authService.observeAuthStatus.subscribe(
-      (status: boolean) => {
-        this.authStatus = status;
-      }
-    );
-  }
   checkStatus(): boolean {
     if (this.isLoggedIn) {
       return true;

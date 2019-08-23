@@ -4,9 +4,9 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { CountryPhone } from '../../models/country-phone.model';
 import { PasswordValidator } from '../../validators/password.validator';
 import { PhoneValidator } from 'src/app/validators/phone.validator';
-import { UsernameValidator } from 'src/app/validators/username.validator';
 import { ToastController } from '@ionic/angular';
-import { HTTPRequestsService } from '../../services/http-requests.service';
+import { HTTPRequestsService } from '../../services/index';
+import { User } from '../../models/index';
 
 @Component({
   selector: 'app-register',
@@ -65,14 +65,14 @@ export class RegisterPage implements OnInit {
 
   };
 
-
   constructor(
     public formBuilder: FormBuilder,
     private router: Router,
     public toastController: ToastController,
     private requestServ: HTTPRequestsService
   ) { }
-  async presentToast() {
+
+  async presentToast(): Promise<void> {
     const toast = await this.toastController.create({
       message: 'You successfully registered',
       duration: 2000,
@@ -106,16 +106,14 @@ export class RegisterPage implements OnInit {
       return PasswordValidator.areEqual(formGroup);
     });
 
-    const country = new FormControl(this.countries[0], Validators.required);
-    const phone = new FormControl('', Validators.compose([
+    const countryControl = new FormControl(this.countries[0], Validators.required);
+    const phoneControl = new FormControl('', Validators.compose([
       Validators.required,
-      PhoneValidator.validCountryPhone(country)
+      PhoneValidator.validCountryPhone(countryControl)
     ]));
     this.countryPhoneGroup = new FormGroup({
-      // tslint:disable-next-line:object-literal-shorthand
-      country: country,
-      // tslint:disable-next-line:object-literal-shorthand
-      phone: phone
+      country: countryControl,
+      phone: phoneControl
     });
 
     this.validationsForm = this.formBuilder.group({
@@ -148,7 +146,7 @@ export class RegisterPage implements OnInit {
   onSubmit(values) {
 
     this.sendingRequest = true;
-    const corectValues = {
+    const corectValues: User = {
       email: values.email,
       name: values.name,
       lastname: values.lastname,

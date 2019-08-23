@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { HTTPRequestsService } from '../services/http-requests.service';
-import { User } from '../models/user.model';
-import { Book } from '../models/book.model';
+import { HTTPRequestsService } from '../services/index';
+import { User, Book } from '../models/index';
 
 @Component({
   selector: 'app-admin-panel',
@@ -14,10 +13,12 @@ export class AdminPanelPage implements OnInit {
   constructor(private requestServ: HTTPRequestsService) { }
 
   ngOnInit() {
+
+    // TODO: REFARCOTR
     this.requestServ.httpUsersGet()
     .subscribe((response: User) => {
       // tslint:disable-next-line: forin
-      for (let i in response) {
+      for (const i in response) {
         console.log(response);
         this.usersData.push(response[i]);
       }
@@ -25,7 +26,7 @@ export class AdminPanelPage implements OnInit {
     this.requestServ.httpBooksGet()
     .subscribe((response: Book) => {
       // tslint:disable-next-line: forin
-      for (let i in response) {
+      for (const i in response) {
         console.log(response);
         this.booksData.push(response[i]);
       }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { HTTPRequestsService } from '../services/http-requests.service';
+import { HTTPRequestsService } from '../services/index';
 import { LoadingController } from '@ionic/angular';
 
 @Component({

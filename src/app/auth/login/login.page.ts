@@ -1,17 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
-import { CountryPhone } from 'src/app/models/country-phone.model';
-import { Router } from '@angular/router';
-import { ToastController } from '@ionic/angular';
-import { HTTPRequestsService } from 'src/app/services/http-requests.service';
 import * as firebase from 'firebase/app';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { Observable } from 'rxjs';
-
-import { GooglePlus } from '@ionic-native/google-plus/ngx';
-import { Platform } from '@ionic/angular';
-import { AuthService } from '../../services/auth.service';
 import { first } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
+import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { Platform } from '@ionic/angular';
+import { GooglePlus } from '@ionic-native/google-plus/ngx';
+import { CountryPhone } from 'src/app/models/country-phone.model';
+import { HTTPRequestsService, AuthService } from '../../services/index';
 
 
 @Component({
@@ -27,9 +25,7 @@ export class LoginPage implements OnInit {
   genders: Array<string>;
   sendingRequest = false;
   httpError = '';
-
   user: Observable<firebase.User>;
-
   validationMessages: object = {
     usernameEmail: [
       { type: 'required', message: 'This field is required.' },
@@ -38,7 +34,6 @@ export class LoginPage implements OnInit {
       { type: 'required', message: 'Password is required.' },
     ],
   };
-
 
   constructor(
     public formBuilder: FormBuilder,
@@ -51,6 +46,17 @@ export class LoginPage implements OnInit {
     private authService: AuthService
   ) {
     this.user = this.afAuth.authState;
+  }
+
+  async presentToast(username: string) {
+    const toast = await this.toastController.create({
+      message: 'You successfully log in!' + ' Hi ' + username + ' !',
+      duration: 2000,
+      color: 'dark',
+      showCloseButton: true,
+      cssClass: 'margin-bottom: 100px;',
+    });
+    toast.present();
   }
 
   googleLogin() {
@@ -82,7 +88,7 @@ export class LoginPage implements OnInit {
     try {
       const provider = new firebase.auth.GoogleAuthProvider();
       const credential = await this.afAuth.auth.signInWithPopup(provider);
-      this.authService.anounceChangingAuthStatus(true);
+      this.authService.isLoginSubject.next(true);
       this.router.navigate(['']);
       this.presentToast(credential.user.displayName);
     } catch (err) {
@@ -91,24 +97,13 @@ export class LoginPage implements OnInit {
   }
 
   signOut() {
-    this.authService.anounceChangingAuthStatus(false);
+    this.authService.isLoginSubject.next(false);
     this.afAuth.auth.signOut();
     if (this.platform.is('cordova')) {
       this.gplus.logout();
     }
   }
 
-
-  async presentToast(username: string) {
-    const toast = await this.toastController.create({
-      message: 'You successfully log in!' + ' Hi ' + username + ' !',
-      duration: 2000,
-      color: 'dark',
-      showCloseButton: true,
-      cssClass: 'margin-bottom: 100px;',
-    });
-    toast.present();
-  }
 
   ngOnInit() {
     // reset login status
@@ -131,41 +126,23 @@ export class LoginPage implements OnInit {
       email: values.usernameEmail,
       password: values.matching_passwords.password,
     };
-    // const registerSubcription = this.requestServ.httpUsersAuth(correctValues)
-    //   .subscribe(
-    //     response => {
-    //       setTimeout(() => {
 
-    //         // this.presentToast();
-    //         this.validationsForm.reset(this.validationsForm);
-    //         this.sendingRequest = false;
-    //         this.authService.anounceChangingAuthStatus(true);
-    //         this.httpError = '';
-    //         this.router.navigate(['']);
-    //       }, 1000);
-    //     },
-    //     error => {
-    //       setTimeout(() => {
-    //         this.sendingRequest = false;
-    //         this.httpError =  error.error.message;
-    //       }, 1000);
-    //   });
     this.authService.login(correctValues.email, correctValues.password)
       .pipe(first())
       .subscribe(
           data => {
             setTimeout(() => { // TODO: remove after tests done
               this.presentToast(correctValues.email);
-              FormGroup.prototype.reset(this.validationsForm);
+              // FormGroup.prototype.reset(this.validationsForm);
+              this.validationsForm.reset(this.validationsForm);
               this.httpError = '';
               this.sendingRequest = false;
-              this.authService.anounceChangingAuthStatus(true);
               this.authService.isLoginSubject.next(true);
               this.router.navigate(['']);
             }, 1000);
           },
           error => {
-              this.authService.anounceChangingAuthStatus(false);
+              this.authService.isLoginSubject.next(false);
               this.validationsForm.reset(this.validationsForm);
               this.sendingRequest = false;
               this.httpError =  error.error.message;

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Book, AuthorsBooks } from '../models/book.model';
-import { HTTPRequestsService } from '../services/http-requests.service';
-// import { BatteryStatus } from '@ionic-native/battery-status/ngx';
+import { Book, AuthorsBooks } from '../models/index';
+import { HTTPRequestsService } from '../services/index';
 
 @Component({
   selector: 'main-tab',
@@ -19,10 +18,8 @@ export class MainPage implements OnInit  {
     .subscribe((response: AuthorsBooks) => {
       this.goodsData = [];
       // tslint:disable-next-line: forin
-      for (let i in response) {
-        console.log(response[i]);
-        let authorBook = Object.assign(response[i].book, response[i].author);
-        console.log(authorBook);
+      for (const i in response) {
+        const authorBook: AuthorsBooks = Object.assign(response[i].book, response[i].author);
         this.goodsData.push(authorBook);
       }
     });
