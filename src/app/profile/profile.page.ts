@@ -1,5 +1,5 @@
 import * as JWT from 'jwt-decode';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, DoCheck } from '@angular/core';
 import { FormControl, FormGroup, Validators  } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -14,7 +14,7 @@ import { HTTPRequestsService, PhotoService, AuthService } from '../services/inde
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
 })
-export class ProfilePage implements OnInit {
+export class ProfilePage implements OnInit, DoCheck {
   currentUserId: number;
   currentUser: string;
   currentUserPassword: string;
@@ -40,13 +40,7 @@ export class ProfilePage implements OnInit {
   }
 
   ngOnInit() {
-    let stringUser: string;
-    this.authServ.getCurrentUser().subscribe(
-      (user: string) => {
-        stringUser = user;
-      }
-    );
-    this.userData = JWT(stringUser);
+
 
     this.angForm = new FormGroup({
       age: new FormControl(this.currentUserAge, [Validators.required, Validators.min(18)]),
@@ -72,6 +66,7 @@ export class ProfilePage implements OnInit {
     // on Upload image in profile page
   }
 
+
   logOut() {
     localStorage.clear();
     this.authServ.isLoginSubject.next(false);
@@ -80,5 +75,15 @@ export class ProfilePage implements OnInit {
       this.gplus.logout();
     }
     this.router.navigate(['']);
+  }
+
+  ngDoCheck() {
+    let stringUser: string;
+    this.authServ.getCurrentUser().subscribe(
+      (user: string) => {
+        stringUser = user;
+      }
+    );
+    this.userData = JWT(stringUser);
   }
 }

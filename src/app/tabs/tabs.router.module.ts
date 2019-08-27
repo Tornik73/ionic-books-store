@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TabsPage } from './tabs.page';
+import { NotAuthGuard } from '../guards';
 
 const routes: Routes = [
   {
@@ -28,6 +29,17 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'chat',
+        canActivate: [NotAuthGuard],
+        children: [
+          {
+            path: '',
+            loadChildren: () =>
+              import('../chat/chat.module').then(m => m.ChatPageModule)
+          }
+        ]
+      },
+      {
         path: 'register',
         children: [
           {
@@ -39,6 +51,7 @@ const routes: Routes = [
       },
       {
         path: 'profile',
+        canActivate: [NotAuthGuard],
         children: [
           {
             path: '',
@@ -59,6 +72,7 @@ const routes: Routes = [
       },
       {
         path: 'admin-panel',
+        canActivate: [NotAuthGuard],
         children: [
           {
             path: '',

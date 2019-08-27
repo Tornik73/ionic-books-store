@@ -8,19 +8,20 @@ import { AuthService } from '../services/index';
 })
 export class NotAuthGuard implements CanActivate {
   isLoggedIn: Observable<boolean>;
+  isUserLogIn: boolean;
 
   constructor(private authService: AuthService, private router: Router) {
-    this.isLoggedIn = authService.isLoggedIn();
+    this.isLoggedIn = this.authService.isLoggedIn();
   }
-  canActivate(
-    next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-
-      if (this.isLoggedIn) {
-        return true;
+  canActivate(route: ActivatedRouteSnapshot): boolean {
+      this.isLoggedIn.subscribe(data => {
+        this.isUserLogIn = data;
+      });
+      if (this.isUserLogIn) {
+        return false;
       } else {
         this.router.navigate(['/']);
-        return false;
+        return true;
       }
     }
 }

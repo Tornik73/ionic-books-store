@@ -14,7 +14,7 @@ export class AdminPanelPage implements OnInit {
 
   ngOnInit() {
 
-    // TODO: REFARCOTR
+    // TODO: REFACTOR
     this.requestServ.httpUsersGet()
     .subscribe((response: User) => {
       // tslint:disable-next-line: forin

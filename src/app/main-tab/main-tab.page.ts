@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Book, AuthorsBooks } from '../models/index';
 import { HTTPRequestsService } from '../services/index';
-
+import { IonInfiniteScroll } from '@ionic/angular';
 @Component({
   selector: 'main-tab',
   templateUrl: 'main-tab.page.html',
@@ -9,7 +9,6 @@ import { HTTPRequestsService } from '../services/index';
 })
 export class MainPage implements OnInit  {
   goodsData = [];
-
   constructor(private requestServ: HTTPRequestsService) {
   }
 

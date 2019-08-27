@@ -126,7 +126,6 @@ export class LoginPage implements OnInit {
       email: values.usernameEmail,
       password: values.matching_passwords.password,
     };
-
     this.authService.login(correctValues.email, correctValues.password)
       .pipe(first())
       .subscribe(
@@ -145,7 +144,8 @@ export class LoginPage implements OnInit {
               this.authService.isLoginSubject.next(false);
               this.validationsForm.reset(this.validationsForm);
               this.sendingRequest = false;
-              this.httpError =  error.error.message;
+              console.log(error);
+              // this.httpError =  error.error.message;
           });
   }
 }

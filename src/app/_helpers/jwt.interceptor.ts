@@ -27,13 +27,12 @@ export class JwtInterceptor implements HttpInterceptor {
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         // add auth header with jwt if user is logged in and request is to api url
         const currentUser = localStorage.currentUser;
-        const isLoggedIn = currentUser && currentUser.token;
+        // const isLoggedIn = currentUser && currentUser.token;
         const isApiUrl = request.url.startsWith(environment.serverURL);
-
-        if (isLoggedIn && isApiUrl) {
+        if (currentUser && isApiUrl) {
             request = request.clone({
                 setHeaders: {
-                    Authorization: `Bearer ${currentUser.token}`
+                    Authorization: `Bearer ${currentUser}`
                 }
             });
         }
@@ -41,7 +40,6 @@ export class JwtInterceptor implements HttpInterceptor {
         return next.handle(request).pipe(
             catchError((error: HttpErrorResponse) => {
                 let errorMessage = '';
-                // this.router.navigate(['']);
                 if (error.error instanceof ErrorEvent) {
                     errorMessage = `Error: ${error}`;
                 } else {
