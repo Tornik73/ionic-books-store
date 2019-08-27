@@ -5,11 +5,13 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { ProfilePage } from './profile.page';
+import { NotAuthGuard } from '../guards/not-auth.guard';
 
 const routes: Routes = [
   {
     path: '',
-    component: ProfilePage
+    component: ProfilePage,
+    canActivate: [NotAuthGuard],
   }
 ];
 

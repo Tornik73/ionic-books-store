@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>admin-panel</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-slides pager="true" [options]="slideOpts">
+    <ion-slide>
+      <ion-list>
+        <ion-list-header>
+            Users
+        </ion-list-header>
+
+        <ion-item *ngFor="let user of usersData">
+          <ion-avatar slot="start">
+            <img src="{{user.img}}">
+          </ion-avatar>
+          <ion-label>
+            <h2>Email: {{ user.email | tripledots }}</h2>
+            <h3>Username: {{ user.username }}</h3>
+            <p>Role: {{ user.isAdmin }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+
+    </ion-slide>
+    <ion-slide>
+        <ion-list>
+            <ion-list-header>
+                Books
+            </ion-list-header>
+    
+            <ion-item *ngFor="let books of booksData">
+              <ion-avatar slot="start">
+                <img src="{{books.img}}">
+              </ion-avatar>
+              <ion-label>
+                <h2>Title: {{ books.title | tripledots }}</h2>
+                <h3>Price: {{ books.price }}</h3>
+                <!-- <p>Role: {{ books.isAdmin }}</p> -->
+              </ion-label>
+            </ion-item>
+          </ion-list>
+    
+    </ion-slide>
+    <ion-slide>
+      <h1>Authors</h1>
+    </ion-slide>
+  </ion-slides>
+</ion-content>

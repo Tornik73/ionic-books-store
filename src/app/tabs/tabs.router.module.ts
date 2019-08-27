@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TabsPage } from './tabs.page';
+import { NotAuthGuard } from '../guards';
 
 const routes: Routes = [
   {
@@ -18,12 +19,23 @@ const routes: Routes = [
         ]
       },
       {
-        path: 'tab2',
+        path: 'login',
         children: [
           {
             path: '',
             loadChildren: () =>
-              import('../tab2/tab2.module').then(m => m.Tab2PageModule)
+              import('../auth/login/login.module').then(m => m.LoginPageModule)
+          }
+        ]
+      },
+      {
+        path: 'chat',
+        canActivate: [NotAuthGuard],
+        children: [
+          {
+            path: '',
+            loadChildren: () =>
+              import('../chat/chat.module').then(m => m.ChatPageModule)
           }
         ]
       },
@@ -38,8 +50,40 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'profile',
+        canActivate: [NotAuthGuard],
+        children: [
+          {
+            path: '',
+            loadChildren: () =>
+              import('../profile/profile.module').then(m => m.ProfilePageModule)
+          }
+        ]
+      },
+      {
+        path: 'confirm/:code',
+        children: [
+          {
+            path: '',
+            loadChildren: () =>
+              import('../confirm-email/confirm-email.module').then(m => m.ConfirmEmailPageModule)
+          }
+        ]
+      },
+      {
+        path: 'admin-panel',
+        canActivate: [NotAuthGuard],
+        children: [
+          {
+            path: '',
+            loadChildren: () =>
+              import('../admin-panel/admin-panel.module').then(m => m.AdminPanelPageModule)
+          }
+        ]
+      },
+      {
         path: '',
-        redirectTo: '/tabs/tab1',
+        redirectTo: '/tabs/main-tab',
         pathMatch: 'full'
       }
     ]
