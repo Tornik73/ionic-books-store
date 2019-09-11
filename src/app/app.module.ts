@@ -14,9 +14,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule} from 'angularfire2/auth';
-import { JwtInterceptor, ErrorInterceptor } from './_helpers';
-import { NotAuthGuard } from './guards/not-auth.guard';
-
+import { JwtInterceptor, ErrorInterceptor } from './modules/shared/interceptors';
+import { NotAuthGuard } from './modules/shared/guards/not-auth.guard';
+import { PayPal } from '@ionic-native/paypal/ngx';
+import { Stripe } from '@ionic-native/stripe/ngx';
+import { Camera } from '@ionic-native/camera/ngx';
+import { File } from '@ionic-native/file/ngx';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyCNzv4_QRpxTXSRCo3IBX7aXwHEDjIFi-Y',
@@ -41,12 +44,17 @@ const firebaseConfig = {
     FormsModule,
     HttpClientModule,
     ReactiveFormsModule,
+
   ],
   providers: [
     GooglePlus,
     StatusBar,
     SplashScreen,
+    Camera,
     NotAuthGuard,
+    Stripe,
+    File,
+    PayPal,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     {
@@ -54,6 +62,7 @@ const firebaseConfig = {
       useClass: IonicRouteStrategy,
     }
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+
 })
 export class AppModule {}

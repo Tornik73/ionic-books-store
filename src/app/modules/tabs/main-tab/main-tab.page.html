@@ -1,0 +1,54 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Main page
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+    <ion-card class="welcome-card">
+      <ion-img src="../assets/img/books.jpg"></ion-img>
+      <ion-card-header>
+        <!-- <ion-card-subtitle>Get Started</ion-card-subtitle> -->
+        <ion-card-title>Welcome to the Book||Store</ion-card-title>
+      </ion-card-header>
+      <!-- <ion-card-content>
+        <p>Now that your app has been created, you'll want to start building out features and components. Check out some of the resources below for next steps.</p>
+      </ion-card-content> -->
+    </ion-card>
+    <ion-content>
+    <div>
+        <section class="section">
+            <div class="container">
+              <div *ngFor="let item of goodsData">
+                <ion-card class="card__goods">
+                  <div class="card__goods-title">
+                    <div class="title__img">
+                      <img src="{{ item.img }}" alt="book image">
+                    </div>
+                    <div class="title_name">
+                      <h3>{{ item.title }}</h3>
+                      <h5>{{ item.name }}</h5>
+      
+                    </div>
+                  </div>
+                  <div>
+                    <p>
+                      {{item.description}}
+                    </p>
+                  </div>
+                  <div class="card__goods-buttons">
+                    <div class="card__goods-price">
+                      <p>
+                        Price: {{item.price}}
+                      </p>
+                    </div>
+                    <ion-button >Details</ion-button >
+                    <ion-button >Add to cart</ion-button >
+                  </div>
+                </ion-card>
+              </div>
+            </div>
+        </section>
+      </div>
+</ion-content>
