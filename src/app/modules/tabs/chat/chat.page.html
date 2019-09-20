@@ -1,0 +1,48 @@
+<ion-content>
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+      <ion-refresher-content>
+
+
+      </ion-refresher-content>
+    </ion-refresher>
+      <ion-card *ngIf="this.notAcceptedInvitesToChats.chatsId.length > 0">
+        <ion-card-header>
+          <ion-card-title>Not accepted invitations:</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ul>
+            <ng-container *ngFor="let i of this.notAcceptedInvitesToChats.chatsId;">
+              <li> You are invited in {{ i }} chat room! 
+                <ion-button (click)="acceptInvite(i)" color="primary">Accept</ion-button>
+                <ion-button (click)="declineInvite(i)" color="danger">Decline</ion-button>
+              </li>
+            </ng-container>
+          </ul>
+        </ion-card-content>
+      </ion-card>
+      <ion-card *ngIf="this.notAcceptedInvitesToChats.chatsId.length === 0">
+          <ion-card-header>
+            <ion-card-title>You don`t have any invites :(</ion-card-title>
+          </ion-card-header>
+      </ion-card>
+      <ion-card *ngIf="this.currentChats.length > 0">
+          <ion-card-header>
+            <ion-card-title>Your chats:</ion-card-title>
+          </ion-card-header>
+          <ion-card-content> 
+            <ul> 
+              <ng-container *ngFor="let i of this.currentChats;">
+                <li> {{ i }}
+                  <ion-button (click)="leaveChat(i)" color="danger">X</ion-button>
+                </li>
+              </ng-container>
+            </ul>
+          </ion-card-content>
+        </ion-card>
+        <ion-card *ngIf="this.currentChats.length === 0">
+            <ion-card-header>
+              <ion-card-title>Yours chat list is empty.</ion-card-title>
+            </ion-card-header>
+        </ion-card>
+      
+    </ion-content>

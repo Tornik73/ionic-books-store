@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Main page
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<!-- <ion-card class="welcome-card">
+  <ion-img class="title__img" src="../assets/icon/favicon.png"></ion-img>
+  <ion-card-header>
+    <ion-card-title>Welcome to the Book||Store</ion-card-title>
+  </ion-card-header>
+</ion-card> -->
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <div>
+    <ion-button (click)="toggleInfiniteScroll()" expand="block">
+      Toggle Infinite Scroll
+    </ion-button>
+    <section class="section">
+      <div class="container">
+        <ion-list>
+        <div *ngFor="let item of goodsData">
+          <ion-card class="card__goods">
+            <div class="card__goods-title">
+              <div class="title__img">
+                <img [src]="item.img" alt="book image">
+              </div>
+              <div class="title_name">
+                <h3>{{ item.title }}</h3>
+                <h5>{{ item.name }}</h5>
+
+              </div>
+            </div>
+            <div>
+              <p>
+                {{item.description}}
+              </p>
+            </div>
+            <div class="card__goods-buttons">
+              <div class="card__goods-price">
+                <p>
+                  Price: {{item.price}}
+                </p>
+              </div>
+              <ion-button>Details</ion-button>
+              <ion-button>Add to cart</ion-button>
+            </div>
+          </ion-card>
+        </div>
+      </ion-list>
+      </div>
+    </section>
+  </div>
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+      <ion-infinite-scroll-content
+        loadingSpinner="bubbles"
+        loadingText="Loading more data...">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+</ion-content>
